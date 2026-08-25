@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled connection (runtime queries)
+  directUrl = env("DIRECT_URL")   // direct connection (migrations only)
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  timezone     String   // IANA timezone, e.g. "Asia/Kolkata"
+  createdAt    DateTime @default(now())
+
+  habits Habit[]
+
+  @@map("users")
+}
+
+model Habit {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkIns CheckIn[]
+
+  @@index([userId])
+  @@map("habits")
+}
+
+model CheckIn {
+  id        String   @id @default(uuid())
+  habitId   String
+  // The instant the check-in was recorded (or backfilled-for, at noon local, see backend logic), stored in UTC.
+  utcInstant DateTime @map("utc_instant")
+  // The local calendar day this check-in counts for, derived from the user's IANA timezone at write time.
+  // Stored as a plain date string (YYYY-MM-DD) so equality/uniqueness is unambiguous and timezone-independent
+  // once computed. This is the field the one-per-local-day rule is enforced against.
+  localDate String   @map("local_date")
+  createdAt DateTime @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  // Database-level enforcement of "only one check-in per habit per local day"
+  @@unique([habitId, localDate])
+  @@index([habitId, localDate])
+  @@map("check_ins")
+}
