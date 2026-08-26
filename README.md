@@ -8,6 +8,21 @@ Built with Next.js (App Router), React, TypeScript, Tailwind CSS, Prisma, and Po
 
 ---
 
+## 🎥 Implementation Walkthrough
+
+**[Watch the 5-minute Loom walkthrough →](https://www.loom.com/share/5e1cfd66737d445ba39322457dea40d2)**
+
+The walkthrough covers:
+- Application flow and check-ins
+- Backfilling and streak recalculation
+- Validation and error handling
+- Where the local-day logic lives
+- Server-side streak calculation
+- Database-level uniqueness enforcement
+- Key implementation decisions
+
+---
+
 ## Why this exists
 
 Habit trackers break in one specific, easy-to-miss way: they compute streaks off raw
