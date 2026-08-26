@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { CheckIn } from '@/types';
 import { useHabits } from '@/context/HabitContext';
-import { getRelativeDateString } from '@/lib/mock-data';
+import { getRelativeLocalDateString } from '@/lib/local-date';
 import { ChevronLeft, ChevronRight, Calendar, List } from 'lucide-react';
 
 interface CalendarHeatmapProps {
@@ -25,7 +25,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ checkIns, crea
   const checkInDates = new Set(checkIns.map((c) => c.date));
 
   // Today's local date string (YYYY-MM-DD) in user's timezone
-  const todayStr = getRelativeDateString(0, currentUser?.timezone);
+  const todayStr = getRelativeLocalDateString(0, currentUser?.timezone);
   const todayDate = new Date(todayStr + 'T00:00:00');
 
   // Local view state — presentation only

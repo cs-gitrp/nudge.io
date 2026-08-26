@@ -5,7 +5,7 @@ import { Habit } from '@/types';
 import { useHabits } from '@/context/HabitContext';
 import { Flame, Check, ChevronRight, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getRelativeDateString } from '@/lib/mock-data';
+import { getRelativeLocalDateString } from '@/lib/local-date';
 
 interface HabitCardProps {
   habit: Habit;
@@ -16,7 +16,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
   const router = useRouter();
   const [checkingIn, setCheckingIn] = useState(false);
 
-  const todayStr = getRelativeDateString(0, currentUser?.timezone);
+  const todayStr = getRelativeLocalDateString(0, currentUser?.timezone);
   const isCheckedInToday = habit.checkIns.some((c) => c.date === todayStr);
 
   const handleCheckIn = async (e: React.MouseEvent) => {

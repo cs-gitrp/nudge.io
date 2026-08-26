@@ -5,7 +5,7 @@ import { useHabits } from '@/context/HabitContext';
 import { HabitCard } from './HabitCard';
 import { NewHabitModal } from './NewHabitModal';
 import { Plus, Flame } from 'lucide-react';
-import { getRelativeDateString } from '@/lib/mock-data';
+import { getRelativeLocalDateString } from '@/lib/local-date';
 
 export const HabitCardSkeleton: React.FC = () => {
   return (
@@ -30,7 +30,7 @@ export const HabitList: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   // Compute live summary stats
-  const todayStr = getRelativeDateString(0, currentUser?.timezone);
+  const todayStr = getRelativeLocalDateString(0, currentUser?.timezone);
   const doneToday = habits.filter((h) => h.checkIns.some((c) => c.date === todayStr)).length;
   const totalHabits = habits.length;
   const activeStreaks = habits.filter((h) => h.currentStreak > 0).length;

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Habit } from '@/types';
 import { useHabits } from '@/context/HabitContext';
-import { getRelativeDateString } from '@/lib/mock-data';
+import { getRelativeLocalDateString } from '@/lib/local-date';
 import { Calendar, AlertCircle, Check } from 'lucide-react';
 
 interface BackfillFormProps {
@@ -17,7 +17,7 @@ export const BackfillForm: React.FC<BackfillFormProps> = ({ habit }) => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const todayStr = getRelativeDateString(0, currentUser?.timezone);
+  const todayStr = getRelativeLocalDateString(0, currentUser?.timezone);
   const minDate = habit.createdAt;
   const maxDate = todayStr;
 
