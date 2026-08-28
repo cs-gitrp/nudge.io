@@ -36,15 +36,28 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
   const getLastCheckInText = (): string => {
     if (habit.checkIns.length === 0) return 'No check-ins yet';
 
-    const checkInDates = habit.checkIns.map((c) => new Date(c.date + 'T00:00:00').getTime());
-    const newestTime = Math.max(...checkInDates);
-    const newestDateStr = new Date(newestTime).toISOString().split('T')[0];
+    // habit.checkIns[].date is already a "YYYY-MM-DD" local-day string from the API —
+    // sort/compare as strings directly. Never round-trip local-day strings through
+    // `new Date(...)` + `toISOString()`: that parses in the BROWSER's timezone and
+    // re-serializes in UTC, which can silently shift the date by a day depending on
+    // where the viewer is sitting relative to UTC (the exact class of bug this app
+    // is otherwise built to avoid).
+    const newestDateStr = habit.checkIns.reduce(
+      (latest, c) => (c.date > latest ? c.date : latest),
+      habit.checkIns[0].date
+    );
 
-    const todayDate = new Date(todayStr + 'T00:00:00');
-    const newestDate = new Date(newestDateStr + 'T00:00:00');
-    
-    const diffTime = todayDate.getTime() - newestDate.getTime();
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    // Both todayStr and newestDateStr are "YYYY-MM-DD". Anchor each as UTC midnight
+    // purely as a calculation aid (never displayed) so the day-count diff is exact
+    // and immune to the browser's local timezone.
+    const toUtcMidnight = (dateStr: string) => {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      return Date.UTC(y, m - 1, d);
+    };
+
+    const diffDays = Math.round(
+      (toUtcMidnight(todayStr) - toUtcMidnight(newestDateStr)) / (1000 * 60 * 60 * 24)
+    );
 
     if (diffDays === 0) return 'Checked in today';
     if (diffDays === 1) return 'Checked in yesterday';
